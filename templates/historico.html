@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Histórico | Mecanix{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <div>
+        <span class="section-label">Consulta</span>
+        <h2>Histórico do veículo</h2>
+        <p class="section-description">
+            Consulte os atendimentos e serviços realizados anteriormente.
+        </p>
+    </div>
+</div>
+
+<section class="panel">
+    <div class="panel-header">
+        <h3>Consultar histórico</h3>
+    </div>
+
+    <div class="form-card">
+        <form method="POST">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="veiculo_id">Selecione o veículo</label>
+                    <select id="veiculo_id" name="veiculo_id" required>
+                        <option value="">Selecione o veículo</option>
+                        {% for v in veiculos %}
+                        <option value="{{ v['id'] }}">{{ v['placa'] }} - {{ v['modelo'] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="primary-button">Consultar histórico</button>
+            </div>
+        </form>
+    </div>
+</section>
+
+{% if veiculo %}
+<section class="panel" style="margin-top: 22px;">
+    <div class="panel-header">
+        <h3>
+            Veículo: {{ veiculo['placa'] }} - {{ veiculo['marca'] }} {{ veiculo['modelo'] }}
+            (Cliente: {{ veiculo['cliente_nome'] }})
+        </h3>
+    </div>
+
+    <div class="data-table-wrapper">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Descrição</th>
+                    <th>Status</th>
+                    <th>Valor</th>
+                    <th>Data de abertura</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for a in atendimentos %}
+                <tr>
+                    <td>{{ a["id"] }}</td>
+                    <td>{{ a["descricao"] }}</td>
+                    <td>{{ a["status"] }}</td>
+                    <td>R$ {{ "%.2f"|format(a["valor"]) }}</td>
+                    <td>{{ a["data_abertura"] }}</td>
+                </tr>
+
+                {% else %}
+                <tr>
+                    <td colspan="5">Nenhum atendimento registrado para este veículo.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

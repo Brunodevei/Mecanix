@@ -7,11 +7,11 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <div class="app-layout">
+    <div class="app-layout {% if not session.get('usuario_id') %}login-layout{% endif %}">
+        {% if session.get('usuario_id') %}
         <aside class="sidebar">
             <div class="brand">
                 <div class="brand-mark">M</div>
-
                 <div class="brand-text">
                     <strong>Mecanix</strong>
                     <span>Gestão de oficina</span>
@@ -19,48 +19,37 @@
             </div>
 
             <nav class="main-navigation">
-                <a
-                    href="{{ url_for('index') }}"
-                    class="navigation-item"
-                >
-                    Início
-                </a>
-
-                <a
-                    href="{{ url_for('clientes') }}"
-                    class="navigation-item"
-                >
-                    Clientes
-                </a>
-
-                <a
-                    href="{{ url_for('veiculos') }}"
-                    class="navigation-item"
-                >
-                    Veículos
-                </a>
-
-                <a
-                    href="{{ url_for('ordens') }}"
-                    class="navigation-item"
-                >
-                    Ordens de serviço
-                </a>
+                <a href="{{ url_for('index') }}" class="navigation-item">Início</a>
+                <a href="{{ url_for('clientes') }}" class="navigation-item">Clientes</a>
+                <a href="{{ url_for('veiculos') }}" class="navigation-item">Veículos</a>
+                <a href="{{ url_for('ordens') }}" class="navigation-item">Ordens de serviço</a>
+                <a href="{{ url_for('historico') }}" class="navigation-item">Histórico</a>
+                <a href="{{ url_for('relatorios') }}" class="navigation-item">Relatórios</a>
+                <a href="{{ url_for('usuarios') }}" class="navigation-item">Usuários</a>
+                <a href="{{ url_for('logout') }}" class="navigation-item">Sair</a>
             </nav>
 
             <div class="sidebar-footer">
                 <div class="system-status">
                     <span class="status-indicator"></span>
-
                     <div>
-                        <strong>Sistema operacional</strong>
+                        <strong>Sistema em funcionamento</strong>
                         <span>Mecanix</span>
                     </div>
                 </div>
             </div>
         </aside>
+        {% else %}
+        <header class="login-topbar">
+            <div class="login-brand">
+                <div class="brand-mark">M</div>
+                <strong>Mecanix</strong>
+            </div>
+        </header>
+        {% endif %}
 
-        <div class="main-area">
+        <div class="main-area {% if not session.get('usuario_id') %}full-width{% endif %}">
+            {% if session.get('usuario_id') %}
             <header class="topbar">
                 <div class="page-context">
                     <span class="page-context-label">Sistema de gestão</span>
@@ -69,15 +58,15 @@
 
                 <div class="user-area">
                     <div class="user-avatar">M</div>
-
                     <div class="user-info">
-                        <strong>Administrador</strong>
-                        <span>Acesso ao sistema</span>
+                        <strong>{{ session.get('usuario_nome', 'Usuário') }}</strong>
+                        <span>{{ session.get('usuario_perfil', 'Acesso') }}</span>
                     </div>
                 </div>
             </header>
+            {% endif %}
 
-            <main class="content">
+            <main class="content {% if not session.get('usuario_id') %}login-content{% endif %}">
                 {% block content %}{% endblock %}
             </main>
         </div>

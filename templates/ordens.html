@@ -1,39 +1,47 @@
 {% extends "base.html" %}
 
-{% block title %}Ordens de serviço | Mecanix{% endblock %}
+{% block title %}Atendimentos | Mecanix{% endblock %}
 
 {% block content %}
 <div class="dashboard-header">
     <div>
         <span class="section-label">Operação</span>
-        <h2>Ordens de serviço</h2>
+        <h2>Diagnóstico, Orçamento e Atendimentos</h2>
         <p class="section-description">
-            Registre, acompanhe e gerencie os serviços realizados na oficina.
+            Fluxo integrado de atendimento da oficina.
         </p>
     </div>
-
-    <a href="#nova-ordem" class="primary-button">Nova ordem de serviço</a>
 </div>
 
-<div class="panel" id="nova-ordem">
+{% if erro %}
+<div class="toast-notification toast-error" id="toast-message">
+    <span>{{ erro }}</span>
+    <button type="button" class="toast-close" onclick="fecharToast()">×</button>
+</div>
+{% endif %}
+
+{% if alerta_margem %}
+<div class="toast-notification toast-warning" id="toast-message">
+    <span>{{ alerta_margem }}</span>
+    <button type="button" class="toast-close" onclick="fecharToast()">×</button>
+</div>
+{% endif %}
+
+<section class="panel">
     <div class="panel-header">
-        <div>
-            <span class="section-label">Cadastro</span>
-            <h3>Nova ordem de serviço</h3>
-        </div>
+        <h3>Novo atendimento</h3>
     </div>
 
     <div class="form-card">
-        <form method="POST" action="{{ url_for('cadastrar_ordem') }}">
+        <form method="POST" action="{{ url_for('ordens') }}">
             <div class="form-grid">
+
                 <div class="form-group">
                     <label for="cliente_id">Cliente</label>
                     <select id="cliente_id" name="cliente_id" required>
                         <option value="">Selecione o cliente</option>
                         {% for cliente in clientes %}
-                        <option value="{{ cliente['id'] }}">
-                            {{ cliente['nome'] }}
-                        </option>
+                        <option value="{{ cliente['id'] }}">{{ cliente['nome'] }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -43,60 +51,55 @@
                     <select id="veiculo_id" name="veiculo_id" required>
                         <option value="">Selecione o veículo</option>
                         {% for veiculo in veiculos %}
-                        <option value="{{ veiculo['id'] }}">
+                        <option value="{{ veiculo['id'] }}" data-cliente="{{ veiculo['cliente_id'] }}">
                             {{ veiculo['placa'] }} - {{ veiculo['modelo'] }}
                         </option>
                         {% endfor %}
                     </select>
                 </div>
 
-                <div class="form-group">
-                    <label for="descricao">Descrição do serviço</label>
-                    <input
-                        type="text"
-                        id="descricao"
-                        name="descricao"
-                        placeholder="Descreva o serviço"
-                        required
-                    >
+                <div class="form-group full">
+                    <label for="problemas">Diagnóstico</label>
+                    <textarea id="problemas" name="problemas" placeholder="Descreva os problemas identificados no veículo"></textarea>
+                </div>
+
+                <div class="form-group full">
+                    <label for="descricao">Peças e serviços</label>
+                    <input type="text" id="descricao" name="descricao" placeholder="Descreva os serviços e peças necessários" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="status">Status</label>
+                    <label for="custo_total">Custo total</label>
+                    <input type="text" id="custo_total" name="custo_total" placeholder="0,00" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="preco_final">Preço final do orçamento</label>
+                    <input type="text" id="preco_final" name="preco_final" placeholder="0,00" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="status">Status inicial</label>
                     <select id="status" name="status" required>
                         <option value="Aberta">Aberta</option>
                         <option value="Em andamento">Em andamento</option>
-                        <option value="Concluída">Concluída</option>
+                        <option value="Recusado">Recusado</option>
                         <option value="Cancelada">Cancelada</option>
                     </select>
                 </div>
 
-                <div class="form-group">
-                    <label for="valor">Valor</label>
-                    <input
-                        type="text"
-                        id="valor"
-                        name="valor"
-                        inputmode="decimal"
-                        placeholder="0,00"
-                        required
-                    >
-                </div>
             </div>
 
             <div class="form-actions">
-                <button type="submit">Cadastrar ordem</button>
+                <button type="submit" class="primary-button">Salvar atendimento</button>
             </div>
         </form>
     </div>
-</div>
+</section>
 
-<div class="panel" style="margin-top: 22px;">
+<section class="panel panel-spacing">
     <div class="panel-header">
-        <div>
-            <span class="section-label">Registros</span>
-            <h3>Ordens cadastradas</h3>
-        </div>
+        <h3>Atendimentos cadastrados</h3>
     </div>
 
     <div class="data-table-wrapper">
@@ -107,10 +110,12 @@
                     <th>Cliente</th>
                     <th>Veículo</th>
                     <th>Descrição</th>
-                    <th>Abertura</th>
+                    <th>Peças</th>
+                    <th>Custo</th>
+                    <th>Preço</th>
+                    <th>Margem</th>
                     <th>Status</th>
-                    <th>Valor</th>
-                    <th>Ação</th>
+                    <th>Ações</th>
                 </tr>
             </thead>
 
@@ -119,33 +124,74 @@
                 <tr>
                     <td>{{ ordem["id"] }}</td>
                     <td>{{ ordem["cliente_nome"] }}</td>
-                    <td>
-                        {{ ordem["placa"] }} -
-                        {{ ordem["marca"] }}
-                        {{ ordem["modelo"] }}
-                    </td>
+                    <td>{{ ordem["placa"] }}</td>
                     <td>{{ ordem["descricao"] }}</td>
-                    <td>{{ ordem["data_abertura"] }}</td>
-                    <td>{{ ordem["status"] }}</td>
-                    <td>R$ {{ "%.2f"|format(ordem["valor"]) }}</td>
+
                     <td>
-                        <form
-                            method="POST"
-                            action="{{ url_for('excluir_ordem', ordem_id=ordem['id']) }}"
-                        >
-                            <button type="submit">Excluir</button>
+                        <ul class="clean-list">
+                            {% for peca in ordem["pecas"] %}
+                            <li>{{ peca["nome"] }} - R$ {{ "%.2f"|format(peca["custo"]) }}</li>
+                            {% else %}
+                            <li>Nenhuma peça cadastrada.</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+
+                    <td>R$ {{ "%.2f"|format(ordem["custo_total"]) }}</td>
+                    <td>R$ {{ "%.2f"|format(ordem["preco_final"]) }}</td>
+                    <td>{{ "%.1f"|format(ordem["margem_lucro"]) }}%</td>
+
+                    <td>
+                        <form method="POST" action="{{ url_for('atualizar_status_ordem', ordem_id=ordem['id']) }}">
+                            <select name="status" onchange="this.form.submit()" class="status-select-table">
+                                <option value="Aberta" {% if ordem["status"] == "Aberta" %}selected{% endif %}>Aberta</option>
+                                <option value="Em andamento" {% if ordem["status"] == "Em andamento" %}selected{% endif %}>Em andamento</option>
+                                <option value="Recusado" {% if ordem["status"] == "Recusado" %}selected{% endif %}>Recusado</option>
+                                <option value="Cancelada" {% if ordem["status"] == "Cancelada" %}selected{% endif %}>Cancelada</option>
+                            </select>
                         </form>
                     </td>
+
+                    <td>
+                        <div class="table-actions-inline">
+
+                            <form method="POST" action="{{ url_for('atualizar_status_ordem', ordem_id=ordem['id']) }}">
+                                <input type="hidden" name="status" value="Em andamento">
+                                <button type="submit" class="btn-action-small">Aprovar</button>
+                            </form>
+
+                            <form method="POST" action="{{ url_for('atualizar_status_ordem', ordem_id=ordem['id']) }}">
+                                <input type="hidden" name="status" value="Recusado">
+                                <button type="submit" class="btn-action-small">Recusar</button>
+                            </form>
+
+                            <form id="form-excluir-{{ ordem['id'] }}" method="POST" action="{{ url_for('excluir_ordem', ordem_id=ordem['id']) }}">
+                                <button type="button" class="btn-action-danger btn-excluir-ordem" data-id="{{ ordem['id'] }}">Excluir</button>
+                            </form>
+
+                        </div>
+                    </td>
                 </tr>
+
                 {% else %}
                 <tr>
-                    <td colspan="8">
-                        Nenhuma ordem de serviço cadastrada.
-                    </td>
+                    <td colspan="10">Nenhum atendimento cadastrado.</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
+    </div>
+</section>
+
+<div id="modal-exclusao" class="modal-overlay" style="display: none;">
+    <div class="modal-card">
+        <h3>Confirmar exclusão</h3>
+        <p>Tem certeza de que deseja excluir este atendimento? Esta ação não poderá ser desfeita.</p>
+
+        <div class="modal-actions">
+            <button type="button" class="btn-secondary" id="btn-cancelar-exclusao">Cancelar</button>
+            <button type="button" class="btn-danger" id="btn-confirmar-exclusao">Sim, excluir</button>
+        </div>
     </div>
 </div>
 {% endblock %}

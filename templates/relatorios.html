@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Relatórios | Mecanix{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <div>
+        <span class="section-label">Gestão</span>
+        <h2>Relatórios</h2>
+        <p class="section-description">
+            Consulte informações sobre os serviços realizados e os resultados da oficina.
+        </p>
+    </div>
+</div>
+
+<section class="panel">
+    <div class="form-card">
+        <form method="POST">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="tipo">Tipo de relatório</label>
+                    <select id="tipo" name="tipo" required>
+                        <option value="servicos">Serviços realizados</option>
+                        <option value="faturamento">Faturamento por status</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit">Gerar relatório</button>
+            </div>
+        </form>
+    </div>
+</section>
+
+<section class="panel" style="margin-top: 22px;">
+    <div class="data-table-wrapper">
+        <table class="data-table">
+            <thead>
+                {% if tipo == 'faturamento' %}
+                <tr>
+                    <th>Status</th>
+                    <th>Quantidade</th>
+                    <th>Total (R$)</th>
+                </tr>
+                {% else %}
+                <tr>
+                    <th>ID</th>
+                    <th>Cliente</th>
+                    <th>Descrição</th>
+                    <th>Status</th>
+                    <th>Valor</th>
+                </tr>
+                {% endif %}
+            </thead>
+            <tbody>
+                {% if tipo == 'faturamento' %}
+                    {% for r in resultados %}
+                    <tr>
+                        <td>{{ r["status"] }}</td>
+                        <td>{{ r["qtd"] }}</td>
+                        <td>R$ {{ "%.2f"|format(r["total"] or 0) }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="3">Nenhum dado encontrado.</td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    {% for r in resultados %}
+                    <tr>
+                        <td>{{ r["id"] }}</td>
+                        <td>{{ r["cliente_nome"] }}</td>
+                        <td>{{ r["descricao"] }}</td>
+                        <td>{{ r["status"] }}</td>
+                        <td>R$ {{ "%.2f"|format(r["valor"]) }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5">Nenhum dado encontrado.</td>
+                    </tr>
+                    {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}
