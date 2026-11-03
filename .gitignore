@@ -1,0 +1,6 @@
+mecanix.db
+__pycache__/
+*.py[cod]
+.vscode/
+venv/
+.venv/

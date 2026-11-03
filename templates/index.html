@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Início - Mecanix{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <div>
+        <span class="section-label">Visão geral</span>
+        <h2>Mecanix</h2>
+        <p class="section-description">
+            Gerencie clientes, veículos e ordens de serviço da oficina.
+        </p>
+    </div>
+</div>
+
+<section class="summary-grid">
+    <div class="summary-card">
+        <span class="summary-card-header">Clientes cadastrados</span>
+        <strong class="summary-value">{{ clientes_total }}</strong>
+        <span class="summary-description">
+            Clientes registrados no sistema
+        </span>
+    </div>
+
+    <div class="summary-card">
+        <span class="summary-card-header">Veículos cadastrados</span>
+        <strong class="summary-value">{{ veiculos_total }}</strong>
+        <span class="summary-description">
+            Veículos vinculados aos clientes
+        </span>
+    </div>
+
+    <div class="summary-card">
+        <span class="summary-card-header">Ordens abertas</span>
+        <strong class="summary-value">{{ ordens_abertas }}</strong>
+        <span class="summary-description">
+            Aguardando atendimento
+        </span>
+    </div>
+
+    <div class="summary-card">
+        <span class="summary-card-header">Em andamento</span>
+        <strong class="summary-value">{{ ordens_andamento }}</strong>
+        <span class="summary-description">
+            Serviços em execução
+        </span>
+    </div>
+</section>
+
+<section class="dashboard-grid">
+    <div class="panel">
+        <div class="panel-header">
+            <div>
+                <span class="section-label">Acesso rápido</span>
+                <h3>Principais funcionalidades</h3>
+            </div>
+        </div>
+
+        <div class="quick-actions">
+            <a class="quick-action" href="{{ url_for('clientes') }}">
+                <strong>Clientes</strong>
+                <span>
+                    Cadastrar, consultar e excluir clientes.
+                </span>
+            </a>
+
+            <a class="quick-action" href="{{ url_for('veiculos') }}">
+                <strong>Veículos</strong>
+                <span>
+                    Cadastrar veículos e vinculá-los aos clientes.
+                </span>
+            </a>
+
+            <a class="quick-action" href="{{ url_for('ordens') }}">
+                <strong>Ordens de serviço</strong>
+                <span>
+                    Criar e acompanhar os serviços da oficina.
+                </span>
+            </a>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="panel-header">
+            <div>
+                <span class="section-label">Sistema</span>
+                <h3>Status da aplicação</h3>
+            </div>
+        </div>
+
+        <div class="empty-state">
+            <h4>Banco de dados conectado</h4>
+
+            <p>
+                O sistema está funcionando normalmente e os dados do painel
+                são carregados diretamente do banco de dados da aplicação.
+            </p>
+
+            <a
+                href="{{ url_for('status') }}"
+                class="secondary-button"
+                target="_blank"
+            >
+                Verificar status
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

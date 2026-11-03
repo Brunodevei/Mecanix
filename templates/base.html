@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Mecanix{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-mark">M</div>
+
+                <div class="brand-text">
+                    <strong>Mecanix</strong>
+                    <span>Gestão de oficina</span>
+                </div>
+            </div>
+
+            <nav class="main-navigation">
+                <a
+                    href="{{ url_for('index') }}"
+                    class="navigation-item"
+                >
+                    Início
+                </a>
+
+                <a
+                    href="{{ url_for('clientes') }}"
+                    class="navigation-item"
+                >
+                    Clientes
+                </a>
+
+                <a
+                    href="{{ url_for('veiculos') }}"
+                    class="navigation-item"
+                >
+                    Veículos
+                </a>
+
+                <a
+                    href="{{ url_for('ordens') }}"
+                    class="navigation-item"
+                >
+                    Ordens de serviço
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="system-status">
+                    <span class="status-indicator"></span>
+
+                    <div>
+                        <strong>Sistema operacional</strong>
+                        <span>Mecanix</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <div class="main-area">
+            <header class="topbar">
+                <div class="page-context">
+                    <span class="page-context-label">Sistema de gestão</span>
+                    <h1>Mecanix</h1>
+                </div>
+
+                <div class="user-area">
+                    <div class="user-avatar">M</div>
+
+                    <div class="user-info">
+                        <strong>Administrador</strong>
+                        <span>Acesso ao sistema</span>
+                    </div>
+                </div>
+            </header>
+
+            <main class="content">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/forms.js') }}"></script>
+</body>
+</html>

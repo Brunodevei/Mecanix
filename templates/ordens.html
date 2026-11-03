@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block title %}Ordens de serviço | Mecanix{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <div>
+        <span class="section-label">Operação</span>
+        <h2>Ordens de serviço</h2>
+        <p class="section-description">
+            Registre, acompanhe e gerencie os serviços realizados na oficina.
+        </p>
+    </div>
+
+    <a href="#nova-ordem" class="primary-button">Nova ordem de serviço</a>
+</div>
+
+<div class="panel" id="nova-ordem">
+    <div class="panel-header">
+        <div>
+            <span class="section-label">Cadastro</span>
+            <h3>Nova ordem de serviço</h3>
+        </div>
+    </div>
+
+    <div class="form-card">
+        <form method="POST" action="{{ url_for('cadastrar_ordem') }}">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="cliente_id">Cliente</label>
+                    <select id="cliente_id" name="cliente_id" required>
+                        <option value="">Selecione o cliente</option>
+                        {% for cliente in clientes %}
+                        <option value="{{ cliente['id'] }}">
+                            {{ cliente['nome'] }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="veiculo_id">Veículo</label>
+                    <select id="veiculo_id" name="veiculo_id" required>
+                        <option value="">Selecione o veículo</option>
+                        {% for veiculo in veiculos %}
+                        <option value="{{ veiculo['id'] }}">
+                            {{ veiculo['placa'] }} - {{ veiculo['modelo'] }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="descricao">Descrição do serviço</label>
+                    <input
+                        type="text"
+                        id="descricao"
+                        name="descricao"
+                        placeholder="Descreva o serviço"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="status">Status</label>
+                    <select id="status" name="status" required>
+                        <option value="Aberta">Aberta</option>
+                        <option value="Em andamento">Em andamento</option>
+                        <option value="Concluída">Concluída</option>
+                        <option value="Cancelada">Cancelada</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="valor">Valor</label>
+                    <input
+                        type="text"
+                        id="valor"
+                        name="valor"
+                        inputmode="decimal"
+                        placeholder="0,00"
+                        required
+                    >
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit">Cadastrar ordem</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="panel" style="margin-top: 22px;">
+    <div class="panel-header">
+        <div>
+            <span class="section-label">Registros</span>
+            <h3>Ordens cadastradas</h3>
+        </div>
+    </div>
+
+    <div class="data-table-wrapper">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Cliente</th>
+                    <th>Veículo</th>
+                    <th>Descrição</th>
+                    <th>Abertura</th>
+                    <th>Status</th>
+                    <th>Valor</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for ordem in ordens %}
+                <tr>
+                    <td>{{ ordem["id"] }}</td>
+                    <td>{{ ordem["cliente_nome"] }}</td>
+                    <td>
+                        {{ ordem["placa"] }} -
+                        {{ ordem["marca"] }}
+                        {{ ordem["modelo"] }}
+                    </td>
+                    <td>{{ ordem["descricao"] }}</td>
+                    <td>{{ ordem["data_abertura"] }}</td>
+                    <td>{{ ordem["status"] }}</td>
+                    <td>R$ {{ "%.2f"|format(ordem["valor"]) }}</td>
+                    <td>
+                        <form
+                            method="POST"
+                            action="{{ url_for('excluir_ordem', ordem_id=ordem['id']) }}"
+                        >
+                            <button type="submit">Excluir</button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="8">
+                        Nenhuma ordem de serviço cadastrada.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
