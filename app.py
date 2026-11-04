@@ -5,7 +5,7 @@ import os
 import secrets
 import sqlite3
 from datetime import timedelta
-from flask import Flask, g, redirect, render_template, request, session, url_for
+from flask import Flask, g, redirect, render_template, request, session, url_for, flash
 from werkzeug.security import check_password_hash, generate_password_hash
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -398,7 +398,7 @@ def ordens():
                 margem = ((preco_final - custo_total) / preco_final) * 100
 
             if margem < 20:
-                alerta_margem = "Aviso: A margem de lucro está abaixo de 20%!"
+                flash("Aviso: A margem de lucro está abaixo de 20%!")
 
             database.execute(
                 """

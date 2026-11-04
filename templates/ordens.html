@@ -20,12 +20,14 @@
 </div>
 {% endif %}
 
-{% if alerta_margem %}
-<div class="toast-notification toast-warning" id="toast-message">
-    <span>{{ alerta_margem }}</span>
-    <button type="button" class="toast-close" onclick="fecharToast()">×</button>
-</div>
-{% endif %}
+{% with mensagens = get_flashed_messages(with_categories=true) %}
+    {% for categoria, mensagem in mensagens %}
+        <div class="toast-notification toast-warning" id="toast-message">
+            <span>{{ mensagem }}</span>
+            <button type="button" class="toast-close" onclick="fecharToast()">×</button>
+        </div>
+    {% endfor %}
+{% endwith %}
 
 <section class="panel">
     <div class="panel-header">
