@@ -424,10 +424,7 @@ def ordens():
 
     for o in ordens_cursor:
         o_dict = dict(o)
-        pecas = database.execute(
-            "SELECT * FROM pecas_veiculo WHERE veiculo_id = ?", (o["veiculo_db_id"],)
-        ).fetchall()
-        o_dict["pecas"] = pecas
+        o_dict["pecas"] = []
         ordens_lista.append(o_dict)
 
     clientes_lista = database.execute(

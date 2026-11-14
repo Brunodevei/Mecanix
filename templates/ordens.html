@@ -131,11 +131,11 @@
 
                     <td>
                         <ul class="clean-list">
-                            {% for peca in ordem["pecas"] %}
-                            <li>{{ peca["nome"] }} - R$ {{ "%.2f"|format(peca["custo"]) }}</li>
+                            {% if ordem["descricao"] %}
+                                <li>{{ ordem["descricao"] }}</li>
                             {% else %}
-                            <li>Nenhuma peça cadastrada.</li>
-                            {% endfor %}
+                                <li>Nenhuma peça cadastrada.</li>
+                            {% endif %}
                         </ul>
                     </td>
 
