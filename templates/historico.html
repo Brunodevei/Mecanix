@@ -64,7 +64,7 @@
                 {% for a in atendimentos %}
                 <tr>
                     <td>{{ a["id"] }}</td>
-                    <td>{{ a["descricao"] }}</td>
+                    <td>{{ a["problemas"] }}</td>
                     <td>{{ a["status"] }}</td>
                     <td>R$ {{ "%.2f"|format(a["valor"]) }}</td>
                     <td>{{ a["data_abertura"] }}</td>
